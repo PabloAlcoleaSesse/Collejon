@@ -3,52 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter with History</title>
+    <title>Es por tu bien Pinchi</title>
     <style>
         body {
             font-family: Satoshi Bold, sans-serif;
             margin: 20px;
-            background-color: #696969; /* Change background color to navy blue */
-            color: #FFFFFF /* Change text color to a tone of white */
+            background-color: #696969;
+            color: #FFFFFF;
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* Center main content */
+            align-items: flex-start;
         }
         #counterSection {
-            flex: 1;
+            flex: 2;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed; /* Fix counter in center */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #counterSection h1 {
+            font-size: 5em; /* Increase heading size */
         }
         #counter {
-            font-size: 2em;
-            margin-bottom: 20px;
+            font-size: 8em;
+            margin-top: -30px;
+            margin-bottom: 30px;
+        }
+        button {
+            font-size: 1.5em; /* Make buttons bigger */
+            padding: 10px 20px;
+            margin: 0 5px; /* Set margin to 5px on each side (total 10px between buttons) */
+            border-radius: 25px; /* Add rounded corners */
+            border: none; /* Optional: removes default border */
         }
         #history {
-            flex: 1;
+            flex: 0.8;
             margin-top: 20px;
-            margin-left: 20px;
+            padding-left: 20px;
+            position: fixed; /* Fix history position */
+            right: 20px; /* Place on right side */
+            top: 20px;
+        }
+
+        @keyframes slideLeft {
+            0% {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        #history h2 {
+            animation: slideLeft 0.5s ease-out forwards;
+            padding: 10px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
+    <div id="history">
+        <h2>History</h2>
+        <ul id="historyList"></ul>
+    </div>
     <div id="counterSection">
         <h1>Counter</h1>
         <div id="counter">0</div>
         <button onclick="incrementCounter()">Increment</button>
         <button onclick="resetCounter()">Reset</button>
     </div>
-    <div id="history">
-        <h2>History</h2>
-        <ul id="historyList"></ul>
+
+    <!-- Add the message div -->
+    <div id="message" style="
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        font-style: extra bold;
+        color: #FFFFFF;
+        padding: 10px;
+        width: 80%;
+        font-size: 1.2em;">
+        Este programa esta pensado para ayudar a nuestro amigo Javier Agüado. Javier tiene vicios, nosotros queremos ayudarle. Por favor utilizad esta herramienta responsablemente.
     </div>
 
     <script>
-        let counter = 0;
-        let history = [];
-        const resetPassword = "Pinchi Maricon"; // Set your password here
+        let counter = parseInt(localStorage.getItem('counter')) || 0;
+        let history = JSON.parse(localStorage.getItem('history')) || [];
+        const resetPassword = "Pinchi Maricon";
+        
+        // Initialize on page load
+        document.getElementById('counter').innerText = counter;
+        loadHistory();
 
-        // Load counter and history from localStorage
-        window.onload = function() {
-            if (localStorage.getItem('counter')) {
-                counter = parseInt(localStorage.getItem('counter'));
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            history.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item;
+                historyList.appendChild(listItem);
+            });
+        }
+
+        function incrementCounter() {
+            counter++;
+            document.getElementById('counter').innerText = counter;
+            localStorage.setItem('counter', counter);
+            addToHistory(counter);
+        }
+
+        function addToHistory(value) {
+            const now = new Date();
+            const historyEntry = `${value} - ${now.toLocaleString()}`;
+            history.push(historyEntry);
+            
+            const historyList = document.getElementById('historyList');
+            const listItem = document.createElement('li');
+            listItem.textContent = historyEntry;
+            historyList.appendChild(listItem);
+            
+            localStorage.setItem('history', JSON.stringify(history));
+        }
+
+        function resetCounter() {
+            const password = prompt("Please enter admin password to reset:");
+            if (password === resetPassword) {
+                counter = 0;
+                history = [];
                 document.getElementById('counter').innerText = counter;
+                document.getElementById('historyList').innerHTML = '';
+                localStorage.setItem('counter', counter);
+                localStorage.removeItem('history');
+                alert("Counter reset successful!");
+            } else {
+                alert("Incorrect password. Reset not authorized.");
             }
         }
     </script>
