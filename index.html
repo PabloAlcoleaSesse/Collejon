@@ -9,22 +9,31 @@
             font-family: Satoshi Bold, sans-serif;
             margin: 20px;
             background-color: #696969; /* Change background color to navy blue */
-            color: #F1F7ED; /* Change text color to a tone of white */
+            color: #F1F7ED /* Change text color to a tone of white */
+            display: flex;
+            justify-content: space-between;
+        }
+        #counterSection {
+            flex: 1;
         }
         #counter {
             font-size: 2em;
             margin-bottom: 20px;
         }
         #history {
+            flex: 1;
             margin-top: 20px;
+            margin-left: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Counter</h1>
-    <div id="counter">0</div>
-    <button onclick="incrementCounter()">Increment</button>
-    <button onclick="resetCounter()">Reset</button>
+    <div id="counterSection">
+        <h1>Counter</h1>
+        <div id="counter">0</div>
+        <button onclick="incrementCounter()">Increment</button>
+        <button onclick="resetCounter()">Reset</button>
+    </div>
     <div id="history">
         <h2>History</h2>
         <ul id="historyList"></ul>
@@ -40,47 +49,6 @@
             if (localStorage.getItem('counter')) {
                 counter = parseInt(localStorage.getItem('counter'));
                 document.getElementById('counter').innerText = counter;
-            }
-            if (localStorage.getItem('history')) {
-                history = JSON.parse(localStorage.getItem('history'));
-                history.forEach(item => addHistoryItem(item));
-            }
-        };
-
-        function incrementCounter() {
-            counter++;
-            document.getElementById('counter').innerText = counter;
-            localStorage.setItem('counter', counter);
-            addHistory();
-        }
-
-        function addHistory() {
-            const now = new Date();
-            const historyItem = `Incremented to ${counter} on ${now.toLocaleString()}`;
-            history.push(historyItem);
-            localStorage.setItem('history', JSON.stringify(history));
-            addHistoryItem(historyItem);
-        }
-
-        function addHistoryItem(item) {
-            const historyList = document.getElementById('historyList');
-            const listItem = document.createElement('li');
-            listItem.innerText = item;
-            historyList.appendChild(listItem);
-        }
-
-        function resetCounter() {
-            const password = prompt("Enter the password to reset the counter:");
-            if (password === resetPassword) {
-                counter = 0;
-                history = [];
-                document.getElementById('counter').innerText = counter;
-                document.getElementById('historyList').innerHTML = '';
-                localStorage.removeItem('counter');
-                localStorage.removeItem('history');
-                alert("Counter and history have been reset.");
-            } else {
-                alert("Incorrect password. Reset failed.");
             }
         }
     </script>
