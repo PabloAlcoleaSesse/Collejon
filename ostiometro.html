@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ostiómetro Pinchi</title>
+    <style>
+        body {
+            font-family: Satoshi Bold, sans-serif;
+            margin: 20px;
+            background-color: #696969;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+        }
+        
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        
+        button {
+            font-size: 1.5em;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 25px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ostiómetro Pinchi</h1>
+        <p>Welcome to the Ostiómetro</p>
+        <div id="counter">0</div>
+        <button onclick="incrementCounter()">Increment</button>
+        <button onclick="resetCounter()">Reset</button>
+        <div id="history">
+            <h2>History</h2>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+    <script>
+        let counter = parseInt(localStorage.getItem('ostioCounter')) || 0;
+        let history = JSON.parse(localStorage.getItem('ostioHistory')) || [];
+        const resetPassword = "Pinchi Maricon";
+        
+        // Initialize on page load
+        document.getElementById('counter').innerText = counter;
+        loadHistory();
+    
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            history.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item;
+                historyList.appendChild(listItem);
+            });
+        }
+    
+        function incrementCounter() {
+            counter++;
+            document.getElementById('counter').innerText = counter;
+            localStorage.setItem('ostioCounter', counter);
+            addToHistory(counter);
+        }
+    
+        function addToHistory(value) {
+            const now = new Date();
+            const historyEntry = `${value} - ${now.toLocaleString()}`;
+            history.push(historyEntry);
+            
+            const historyList = document.getElementById('historyList');
+            const listItem = document.createElement('li');
+            listItem.textContent = historyEntry;
+            historyList.appendChild(listItem);
+            
+            localStorage.setItem('ostioHistory', JSON.stringify(history));
+        }
+    
+        function resetCounter() {
+            const password = prompt("Please enter admin password to reset:");
+            if (password === resetPassword) {
+                counter = 0;
+                history = [];
+                document.getElementById('counter').innerText = counter;
+                document.getElementById('historyList').innerHTML = '';
+                localStorage.setItem('ostioCounter', counter);
+                localStorage.removeItem('ostioHistory');
+                alert("Counter reset successful!");
+            } else {
+                alert("Incorrect password. Reset not authorized.");
+            }
+        }
+    </script>
+</body>
+</html>
